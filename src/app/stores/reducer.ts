@@ -672,7 +672,8 @@ export const environmentReducer = (
               ...activeEnvironmentStatus,
               needRestart
             }
-          }
+          },
+          routeFilter: ''
         };
         break;
       }
@@ -967,7 +968,8 @@ export const environmentReducer = (
             ...targetEnvironmentStatus,
             needRestart: targetEnvironmentStatus.running
           }
-        }
+        },
+        routeFilter: ''
       };
       break;
     }

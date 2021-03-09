@@ -8,7 +8,7 @@ import {
 } from '@angular/core';
 import { FormBuilder, FormControl } from '@angular/forms';
 import { Environment, Route } from '@mockoon/commons';
-import { combineLatest, Observable } from 'rxjs';
+import { combineLatest, Observable, Subscription } from 'rxjs';
 import {
   debounceTime,
   distinctUntilChanged,
@@ -47,6 +47,7 @@ export class RoutesMenuComponent implements OnInit {
   public routeFilter$: Observable<string>;
   public routeFilter: FormControl;
   public dragIsDisabled = false;
+  private routeFilterSubscription: Subscription;
 
   constructor(
     private environmentsService: EnvironmentsService,
@@ -112,11 +113,16 @@ export class RoutesMenuComponent implements OnInit {
       this.uiService.scroll(this.routesMenu.nativeElement, scrollDirection);
     });
 
-    this.routeFilter.valueChanges.pipe(
+    this.routeFilterSubscription = this.routeFilter.valueChanges.pipe(
+      distinctUntilChanged(),
       debounceTime(50),
       startWith(''),
       tap(search => this.store.update(updateEnvironmentRouteFilterAction(search)))
     ).subscribe();
+  }
+
+  ngOnDestroy() {
+    this.routeFilterSubscription.unsubscribe();
   }
 
   /**
